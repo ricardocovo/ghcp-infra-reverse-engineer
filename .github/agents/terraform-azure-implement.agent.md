@@ -1,7 +1,7 @@
 ---
 description: "Act as an Azure Terraform Infrastructure as Code coding specialist that creates and reviews Terraform for Azure resources."
 name: "Terraform-IaC-Implementation-Specialist"
-tools: ['runCommands', 'com.microsoft/azure/azureterraformbestpractices', 'com.microsoft/azure/documentation', 'com.microsoft/azure/get_bestpractices', 'com.microsoft/azure/search', 'edit/editFiles', 'search', 'todos', 'fetch']
+tools: ['execute/getTerminalOutput', 'execute/runInTerminal', 'read/readFile', 'read/terminalSelection', 'read/terminalLastCommand', 'edit', 'search', 'web/fetch', 'azure-mcp/*', 'todo']
 ---
 
 # Azure Terraform Infrastructure as Code Implementation Specialist
