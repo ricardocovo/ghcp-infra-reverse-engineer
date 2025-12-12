@@ -13,6 +13,7 @@ This resource group contains a complete application infrastructure stack for the
 ## Resources
 
 ### 1. Container App Environment
+
 **Name:** `ghcsampleps-dev-cae`  
 **Type:** Microsoft.App/managedEnvironments  
 **Location:** Canada Central  
@@ -25,13 +26,15 @@ Container Apps managed environment that provides the hosting infrastructure for 
 ---
 
 ### 2. Log Analytics Workspace
+
 **Name:** `ghcsampleps-dev-log`  
 **Type:** Microsoft.OperationalInsights/workspaces  
 **Location:** Canada Central  
 **Status:** Succeeded  
 **Created:** 2025-12-10 21:29:47 UTC  
 **Last Modified:** 2025-12-11 14:05:07 UTC  
-**Tags:** 
+**Tags:**
+
 - `environment: dev`
 
 Centralized logging and analytics workspace for monitoring and diagnostics across all services.
@@ -39,6 +42,7 @@ Centralized logging and analytics workspace for monitoring and diagnostics acros
 ---
 
 ### 3. Container Registry
+
 **Name:** `ghcsamplepsdevacr`  
 **Type:** Microsoft.ContainerRegistry/registries  
 **Location:** Canada Central  
@@ -47,6 +51,7 @@ Centralized logging and analytics workspace for monitoring and diagnostics acros
 **Created:** 2025-12-10 21:29:47 UTC  
 **Last Modified:** 2025-12-11 14:04:48 UTC  
 **Tags:**
+
 - `environment: dev`
 
 Azure Container Registry for storing and managing container images used by the application.
@@ -54,6 +59,7 @@ Azure Container Registry for storing and managing container images used by the a
 ---
 
 ### 4. Key Vault
+
 **Name:** `ghcsamplepsdevkv`  
 **Type:** Microsoft.KeyVault/vaults  
 **Location:** Canada Central  
@@ -61,6 +67,7 @@ Azure Container Registry for storing and managing container images used by the a
 **Created:** 2025-12-10 21:29:48 UTC  
 **Last Modified:** 2025-12-11 06:01:07 UTC  
 **Tags:**
+
 - `environment: dev`
 
 Secure vault for managing secrets, certificates, and cryptographic keys used by the application.
@@ -68,6 +75,7 @@ Secure vault for managing secrets, certificates, and cryptographic keys used by 
 ---
 
 ### 5. SQL Server
+
 **Name:** `ghcsampleps-dev-sql`  
 **Type:** Microsoft.Sql/servers  
 **Version:** v12.0  
@@ -77,15 +85,18 @@ Secure vault for managing secrets, certificates, and cryptographic keys used by 
 **Last Modified:** 2025-12-11 14:05:16 UTC  
 **Identity:** System-assigned managed identity enabled  
 **Tags:**
+
 - `environment: dev`
 
 **Identity Details:**
+
 - Principal ID: `49af4070-3fd9-4987-9c1d-0fa35869e1a9`
 - Tenant ID: `66d8e3ac-39f0-4505-b4d8-2d91327ff764`
 
 Azure SQL Database server hosting application databases.
 
 #### 5.1 SQL Database - ghcsamplepsdb
+
 **Name:** `ghcsamplepsdb`  
 **Type:** Microsoft.Sql/servers/databases  
 **Location:** Canada Central  
@@ -95,11 +106,13 @@ Azure SQL Database server hosting application databases.
 **Created:** 2025-12-10 21:32:18 UTC  
 **Last Modified:** 2025-12-11 14:05:32 UTC  
 **Tags:**
+
 - `environment: dev`
 
 Application database running in serverless tier for cost optimization.
 
 #### 5.2 SQL Database - master
+
 **Name:** `master`  
 **Type:** Microsoft.Sql/servers/databases  
 **Location:** Canada Central  
@@ -114,6 +127,7 @@ System database (master) managed by Azure SQL Server.
 ---
 
 ### 6. Storage Account
+
 **Name:** `ghcsamplepsdevst`  
 **Type:** Microsoft.Storage/storageAccounts  
 **Kind:** StorageV2  
@@ -123,6 +137,7 @@ System database (master) managed by Azure SQL Server.
 **Created:** 2025-12-10 21:29:48 UTC  
 **Last Modified:** 2025-12-11 14:04:48 UTC  
 **Tags:**
+
 - `environment: dev`
 
 General-purpose v2 storage account for application data, logs, and backups.
@@ -130,6 +145,7 @@ General-purpose v2 storage account for application data, logs, and backups.
 ---
 
 ### 7. Application Insights
+
 **Name:** `ghcsampleps-dev-ai`  
 **Type:** Microsoft.Insights/components  
 **Kind:** web  
@@ -138,6 +154,7 @@ General-purpose v2 storage account for application data, logs, and backups.
 **Created:** 2025-12-10 21:30:08 UTC  
 **Last Modified:** 2025-12-10 21:40:09 UTC  
 **Tags:**
+
 - `environment: dev`
 
 Application performance monitoring and analytics for the web application.
@@ -145,6 +162,7 @@ Application performance monitoring and analytics for the web application.
 ---
 
 ### 8. Container App
+
 **Name:** `ghcsampleps-dev-app`  
 **Type:** Microsoft.App/containerApps  
 **Location:** Canada Central  
@@ -154,10 +172,12 @@ Application performance monitoring and analytics for the web application.
 **Identity:** System-assigned managed identity enabled
 
 **Identity Details:**
+
 - Principal ID: `14474a26-d931-47c9-b0b0-1d41e197156e`
 - Tenant ID: `66d8e3ac-39f0-4505-b4d8-2d91327ff764`
 
 **System Data:**
+
 - Created By: Application (283c6ecd-abe2-439d-b944-920ca1884f65)
 - Last Modified By: User (covoricardo@MngEnvMCAP091123.onmicrosoft.com)
 - Last Modified At: 2025-12-11 15:18:16 UTC
@@ -167,6 +187,7 @@ The main containerized application running in Azure Container Apps.
 ---
 
 ### 9. Action Group
+
 **Name:** `Application Insights Smart Detection`  
 **Type:** microsoft.insights/actiongroups  
 **Location:** Global  
@@ -183,26 +204,32 @@ Action group for Application Insights Smart Detection alerts and notifications.
 This environment represents a modern, cloud-native application stack with:
 
 ### Compute & Hosting
+
 - **Azure Container Apps** for serverless container hosting
 - **Container Apps Environment** for managed infrastructure
 
 ### Data & Storage
+
 - **Azure SQL Database** (Serverless tier) for relational data
 - **Storage Account** (Standard LRS) for blob, file, and table storage
 
 ### DevOps & Registry
+
 - **Azure Container Registry** (Basic tier) for container image management
 
 ### Security
+
 - **Key Vault** for secrets and certificate management
 - **Managed Identities** on SQL Server and Container App
 
 ### Monitoring & Observability
+
 - **Log Analytics Workspace** for centralized logging
 - **Application Insights** for APM and diagnostics
 - **Action Groups** for alerting
 
 ### Cost Optimization Features
+
 - Serverless SQL Database for automatic scaling
 - Basic tier Container Registry for development workloads
 - Standard LRS storage for cost-effective redundancy
