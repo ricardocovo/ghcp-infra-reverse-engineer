@@ -1,0 +1,123 @@
+name: 'Terraform Drift Detection'
+
+on:
+  schedule:
+    # Run every day at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+
+env:
+  TERRAFORM_VERSION: '1.9'
+  WORKING_DIR: './infra'
+
+jobs:
+  terraform-drift:
+    name: 'Detect Configuration Drift'
+    runs-on: ubuntu-latest
+    environment: dev
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+      - name: Azure Login via OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Init
+        working-directory: ${{ env.WORKING_DIR }}
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ env.WORKING_DIR }}
+        env:
+          TF_VAR_sql_admin_password: ${{ secrets.SQL_ADMIN_PASSWORD }}
+        continue-on-error: true
+        run: |
+          terraform plan -var-file="dev.tfvars" -detailed-exitcode -no-color -out=drift.tfplan || export exitcode=$?
+          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+          
+          if [ $exitcode -eq 1 ]; then
+            echo "Terraform Plan Failed!"
+            terraform show -no-color drift.tfplan
+            exit 1
+          else 
+            exit 0
+          fi
+
+      - name: Generate Drift Report
+        if: steps.plan.outputs.exitcode == 2
+        working-directory: ${{ env.WORKING_DIR }}
+        run: |
+          terraform show -no-color drift.tfplan > drift-report.txt
+
+      - name: Create Issue for Drift
+        if: steps.plan.outputs.exitcode == 2
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const driftReport = fs.readFileSync('${{ env.WORKING_DIR }}/drift-report.txt', 'utf8');
+            
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ Terraform Configuration Drift Detected',
+              labels: ['infrastructure', 'drift-detection'],
+              body: `## Configuration Drift Detected
+              
+            Terraform has detected drift in the infrastructure configuration. This means resources have been modified outside of Terraform.
+            
+            **Detection Time:** ${new Date().toISOString()}
+            **Environment:** dev
+            **Workflow Run:** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            ### Drift Report
+            
+            <details><summary>Show Drift Details</summary>
+            
+            \`\`\`terraform
+            ${driftReport}
+            \`\`\`
+            
+            </details>
+            
+            ### Recommended Actions
+            
+            1. Review the changes shown above
+            2. If the changes are intentional, update the Terraform configuration to match
+            3. If the changes are unintentional, run \`terraform apply\` to restore the desired state
+            4. Consider implementing Azure Policy or resource locks to prevent unauthorized changes
+            
+            ### Next Steps
+            
+            - [ ] Review drift report
+            - [ ] Determine if changes are intentional
+            - [ ] Update Terraform code or apply to restore state
+            - [ ] Close this issue once resolved
+            `
+            });
+            
+            console.log(\`Created issue #\${issue.data.number}\`);
+
+      - name: Post Success Summary
+        if: steps.plan.outputs.exitcode == 0
+        run: |
+          echo "### ✅ No Drift Detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Infrastructure is in sync with Terraform configuration." >> $GITHUB_STEP_SUMMARY
+          echo "**Checked at:** $(date -u)" >> $GITHUB_STEP_SUMMARY
