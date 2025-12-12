@@ -1,5 +1,8 @@
 # ghcp-infra-reverse-engineer
 
+[![Terraform Deploy](https://github.com/ricardocovo/ghcp-infra-reverse-engineer/actions/workflows/terraform-deploy.yml/badge.svg)](https://github.com/ricardocovo/ghcp-infra-reverse-engineer/actions/workflows/terraform-deploy.yml)
+[![Terraform Drift Detection](https://github.com/ricardocovo/ghcp-infra-reverse-engineer/actions/workflows/terraform-drift.yml/badge.svg)](https://github.com/ricardocovo/ghcp-infra-reverse-engineer/actions/workflows/terraform-drift.yml)
+
 Reverse-engineers an existing Azure Resource Group into a Terraform implementation (using Azure Verified Modules where available), so you can recreate the environment deterministically.
 
 This repo currently targets the `rg-ghcsampleps-dev` environment in Canada Central and produces implementation assets under `./infra`.
@@ -102,6 +105,13 @@ $env:ARM_CLIENT_SECRET   = "<secret>"
    terraform plan  -var-file="dev.tfvars"
    terraform apply -var-file="dev.tfvars"
    ```
+
+### CI/CD deployment (GitHub Actions)
+
+This repo includes GitHub Actions workflows that run `terraform fmt`, `terraform validate`, `terraform plan` (PRs), and `terraform apply` (on `main`) using Azure OIDC.
+
+- Workflows: `.github/workflows/terraform-deploy.yml` and `.github/workflows/terraform-drift.yml`
+- Setup guide: `.github/workflows/README.md` (secrets, OIDC federated credential, optional remote state backend)
 
 ### State backend
 

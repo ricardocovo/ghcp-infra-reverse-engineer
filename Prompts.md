@@ -13,6 +13,15 @@ Guidance for users using this demo.
 **Result:** `./infra/*`
 
 ---
+**Agent:** `Agent`
+**Model:** Claude Sonnet 4.5
+
+**Prompt:**
+>Based on the ./infra/ folder, can you create a deployment workflow (github actions)
+
+**Result:** `./github/workflow/*`
+
+----
 Uses the custom prompt defined `(.github/prompts/readme-generator.prompt.md)`
 
 **Prompt:**
